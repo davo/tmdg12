@@ -2,35 +2,26 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-    <title>TMDG Live Map</title>
+    <title>TMDG Live MAp</title>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://libs.cartocdn.com/cartodb.js/v2/cartodb.js"></script>
     <script src="http://d3js.org/d3.geo.projection.v0.min.js"></script>
 
-    <!--
-
-    ###                                    ###
-    # Basado en el ejemplo de Andrew X. Hill #
-    # http://bl.ocks.org/andrewxhill/5588084 #
-    ###                                    ###
-
-
-
-
-    ###                                    ###
-    # Creado por Davo Galavotti @pixelbeat   #
-    # Muchas gracias a Andrew, Sergio        #
-    # de CartoDB, José, Martín, Lucas,       #
-    # Pablo y Seba por coparse con la idea.  #
-    ###                                    ###
-
-
-
-    -->
-
     <style type="text/css">
  
-    @import url(stylesheets/style.css);
+    /*
+
+    http://visualizing.org/sprint/launch/51204
+  
+    */
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
 
     body{
         background: #ff5a00;
@@ -42,84 +33,93 @@
       cursor: -webkit-grabbing;
     }
     circle {
-      stroke-width: 1.5px;
+      stroke-width: 2px;
     }
-    #mapa path {
+    #first_layer path {
       fill-opacity:1px;
       fill: #ffe002;
       stroke: #ffe002;
       stroke-width:1px;
       stroke-linecap: round;
       stroke-linejoin: round;
+      /*shape-rendering: crispEdges*/;
     }
  
     .ATA, .HRV {
-      /*
-       * Borro Antartida y Croacia porque se rompen misteriosamente.
-       */
         fill: none !important;
+      }
+
+    .dot {
+      fill: #c7141a;
     }
+
+    .ring {
+      fill: none;
+      stroke: #c7141a;
+    }
+
+    html { cursor: none; }
+
 
     </style>
   </head>
   <body>
 
-  <div id="container">
-    <div id="refer">
+    <script type="text/javascript">
+ var width = 1440,
+    height = 900;
 
-    <h1>#TMDG12 / Mapa</h1>
-    <p>Creamos un mapa colaborativo para poder visualizar desde donde vienen todos.</p>
-    </div>
 
-  </div>
-  <script type="text/javascript">
+var aspect = 11 / 3,
+    chart = $("#chart");
+$(window).on("resize", function() {
+    var targetWidth = chart.parent().width();
+    chart.attr("width", targetWidth);
+    chart.attr("height", targetWidth / aspect);
+});
 
-    var width = 1440, height = 900;
-    var aspect = 11 / 5, chart = $("#chart");
+var svg = d3.select("body")
+    .append("svg")
+      .attr({
+        "width": "1440",
+        "height": "900",
+        "id": "chart"
+      })
+      .attr("viewBox", "0 0 " + width + " " + height )
+      //.attr("preserveAspectRatio", "xMidYMid")
+      .attr("pointer-events", "all")
+    .call(d3.behavior.zoom().on("zoom", redraw))
+    .append("g");
 
-    $(window).on("resize", function() {
-        var targetWidth = chart.parent().width();
-        chart.attr("width", targetWidth);
-        chart.attr("height", targetWidth / aspect);
-    });
+var vis = svg;
 
-    var svg = d3.select("body")
-        .append("svg")
-          .attr({
-            "width": "1440",
-            "height": "900",
-            "id": "chart"
-          })
-          .attr("viewBox", "0 0 " + width + " " + height )
-          .attr("preserveAspectRatio", "xMidYMid")
-          .attr("pointer-events", "all")
-        .call(d3.behavior.zoom().on("zoom", redraw))
-        .append("g");
+function redraw() {
+  vis.attr("transform",
+      "translate(" + d3.event.translate + ")"
+      + " scale(" + d3.event.scale + ")");
+}
 
-    var vis = svg;
-
-    function redraw() {
-      vis.attr("transform",
-          "translate(" + d3.event.translate + ")"
-          + " scale(" + d3.event.scale + ")");
-    }
-
-    var mapa = 'tm_world_borders_simpl_0_4';
+    var first_layer = 'tm_world_borders_simpl_0_4';
  
     var sql = new cartodb.SQL({ user: 'pixelbeat-v21', format: 'geojson', dp: 5});
 
-    var xy = d3.geo.baker();
+           
+ 
+    // Our projection.
+    var xy = d3.geo.mercator();
         xy.scale(420);
         xy.center([-90,0]);
         xy.precision(0);
         
-    svg.append("g").attr("id", "mapa");
+    svg.append("g").attr("id", "first_layer");
+ 
 
+    
     var path = d3.geo.path();
     
-    sql.execute("SELECT ST_Simplify(the_geom,0.0001) as the_geom, iso3 FROM {{table_name}} WHERE the_geom IS NOT NULL", {table_name: mapa})
+    sql.execute("SELECT ST_Simplify(the_geom,0.0001) as the_geom, iso3 FROM {{table_name}} WHERE the_geom IS NOT NULL", {table_name: first_layer})
       .done(function(collection) {
-          svg.select("#mapa")
+          svg.select("#first_layer")
             .selectAll("path")
               .data(collection.features)
             .enter().append("path")
@@ -127,7 +127,7 @@
             .attr("d", path.projection(xy));
       })
       .error(function(errors) {
-        // console.log('Try to catch errors from CartoDB API: '+ errors)
+        // console.log('Errors! Oh no!')
       });
  
     var ciudades;
@@ -144,17 +144,17 @@
       svg.append("circle")
           .attr("cx", xy(c.geometry.coordinates)[0])
           .attr("cy", xy(c.geometry.coordinates)[1])
-          .attr("r", 3)
+          .attr("r", 4)
           .style("fill", "#ff5a00")
-          .style("fill-opacity", .2)
+          .style("fill-opacity", .7)
           .style("stroke", "#ffe002")
           .style("stroke-opacity", .7)
         .transition()
-          .duration(4000)
+          .duration(5000)
           .ease(Math.sqrt)
           .attr("r", c.properties.cnt*5)
           .style("fill-opacity", 1e-5)
-          .style("stroke-opacity", 1e-9)
+          .style("stroke-opacity", 1e-8)
           .remove()
         setTimeout(shower, 5);
       i++;
