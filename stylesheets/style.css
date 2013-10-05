@@ -19,20 +19,29 @@ body {
   margin: 0;
   padding: 0;
   color: #ffe002;
-  cursor: none;
+}
+#container {
+  position: relative;
 }
 #refer {
-  display: none;
+  display: block;
   position: absolute;
-  width: 500px;
-  height: 250px;
+  width: auto;
+  height: auto;
+  top: 215px;
+  left: 0;
+  padding: 10px;
 }
 #refer h1 {
+  font-size: 40px;
   -webkit-font-smoothing: antialiased;
   margin: 0;
   padding: 0;
-  line-height: 50px;
+  line-height: 10px;
 }
 #refer p {
   font-family: AauxNextRegular;
+  font-size: 14px;
+  line-height: 14px;
+  width: 250px;
 }
