@@ -7,5 +7,4 @@ Creamos esta visualización para ver y aprender desde donde llegan todos a la ed
 
 Creado usando CartoDB, d3.js, Google Forms y TopoJSON.
 
-Muchas gracias a José Jimenez, Martin Borini, Pablo, Seba y Lucas DM. Gracias especiales a Andrew X. Hill y Sergio Leiva de CartoDB por su ayuda.
-
+Muchas gracias a José Jimenez, Martin Borini, Pablo, Seba y Lucas DM. Gracias especiales a Andrew X. Hill y Sergio Leiva de CartoDB por su invaluable ayuda.
