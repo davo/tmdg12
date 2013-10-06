@@ -18,9 +18,7 @@
     }
 
     svg:active {
-      cursor: move;
-      cursor: -moz-grabbing;
-      cursor: -webkit-grabbing;
+      cursor: none;
     }
     circle {
       stroke-width: 2px;
@@ -138,8 +136,8 @@ function redraw() {
           .duration(4000)
           .ease(Math.sqrt)
           .attr("r", c.properties.cnt*5)
-          .style("fill-opacity", 1e-5)
-          .style("stroke-opacity", 1e-8)
+          .style("fill-opacity", 1e-8)
+          .style("stroke-opacity", 1e-5)
           .remove()
         setTimeout(shower, 5);
       i++;
