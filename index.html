@@ -103,10 +103,8 @@
     var sql = new cartodb.SQL({ user: 'pixelbeat-v21', format: 'geojson', dp: 5});
 
            
- 
-    // Our projection.
-    var xy = d3.geo.mercator();
-        xy.scale(420);
+    var xy = d3.geo.eckert1();
+        xy.scale(450);
         xy.center([-90,0]);
         xy.precision(0);
         
